@@ -4,21 +4,21 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // 시스템 다크모드 설정 확인
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    setIsDark(prefersDark);
-    if (prefersDark) {
-      document.documentElement.classList.add("dark");
-    }
+    // 이미 layout.tsx의 스크립트에서 적용된 다크 모드 클래스 확인
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    setIsDark(isDarkMode);
+    setMounted(true);
   }, []);
 
   const toggleDarkMode = () => {
-    setIsDark(!isDark);
+    const newDarkMode = !isDark;
+    setIsDark(newDarkMode);
     document.documentElement.classList.toggle("dark");
+    // localStorage에 테마 저장
+    localStorage.setItem("theme", newDarkMode ? "dark" : "light");
   };
 
   return (
@@ -28,7 +28,9 @@ export default function Home() {
         onClick={toggleDarkMode}
         className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-amber-400 to-orange-500 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 dark:from-violet-500 dark:to-indigo-600"
       >
-        <span className="relative z-10 flex items-center gap-3">
+        <span
+          className={`relative z-10 flex items-center gap-3 transition-opacity duration-200 ${mounted ? "opacity-100" : "opacity-0"}`}
+        >
           {isDark ? (
             <>
               <svg
