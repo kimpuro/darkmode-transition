@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import TestComponent from "@/components/TestComponent";
 
 export default function Home() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState<boolean | undefined>(undefined);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -12,6 +13,9 @@ export default function Home() {
     setIsDark(isDarkMode);
     setMounted(true);
   }, []);
+  useEffect(() => {
+      document.documentElement.classList.toggle("dark", isDark);
+  }, [isDark]);
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDark;
@@ -63,6 +67,13 @@ export default function Home() {
         </span>
         <div className="absolute inset-0 z-0 bg-linear-to-br from-white/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       </button>
+      {isDark !== undefined && (
+        <TestComponent>
+          {isDark
+            ? "다크다크다크다크다크다크"
+            : "라이트라이트라이트라이트라이트"}
+        </TestComponent>
+      )}
     </div>
   );
 }
